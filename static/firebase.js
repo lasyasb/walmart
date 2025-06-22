@@ -22,12 +22,14 @@ import {
 
 // Firebase configuration - using environment variables
 const firebaseConfig = {
-  apiKey: window.FIREBASE_API_KEY,
-  authDomain: `${window.FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: window.FIREBASE_PROJECT_ID,
-  storageBucket: `${window.FIREBASE_PROJECT_ID}.firebasestorage.app`,
-  appId: window.FIREBASE_APP_ID
+  apiKey: "AIzaSyD9HtUFhk_AwApjyaL-2ROSCpmrVfyNJdQ",
+  authDomain: "cobudget-20a5d.firebaseapp.com",
+  projectId: "cobudget-20a5d",
+  storageBucket: "cobudget-20a5d.appspot.com",
+  messagingSenderId: "21674588778",
+  appId: "1:21674588778:web:YOUR_ACTUAL_APP_ID"  // Replace with your real App ID
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
