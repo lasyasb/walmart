@@ -17,8 +17,14 @@ app.secret_key = os.environ.get("SESSION_SECRET", "cobudget-dev-secret-key")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Database configuration
+# Database configuration
 database_url = os.environ.get("DATABASE_URL")
-if database_url and database_url.startswith("postgres://"):
+
+# ✅ Add SQLite fallback for environments like Colab
+if not database_url:
+    database_url = "sqlite:///walmart.db"
+
+if database_url.startswith("postgres://"):
     # Fix for newer SQLAlchemy versions that require postgresql://
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
@@ -28,6 +34,7 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 
 # Initialize database
 db.init_app(app)
@@ -54,7 +61,7 @@ SAMPLE_PRODUCTS = [
         "price": 180,
         "category": "Fruits & Vegetables",
         "tags": ["fruits", "apples", "fresh", "red"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/10000148_32-fresho-apple-red-delicious.jpg"
+        "image_url": "https://www.bbassets.com/media/uploads/p/l/40033819_35-fresho-apple-shimla.jpg"
     },
     {
         "id": "FV003",
@@ -62,7 +69,7 @@ SAMPLE_PRODUCTS = [
         "price": 65,
         "category": "Fruits & Vegetables",
         "tags": ["vegetables", "greens", "spinach", "fresh"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/10000023_32-fresho-spinach.jpg"
+        "image_url": "https://sahajaaharam.com/files/Spinach.jpg"
     },
     {
         "id": "FV004",
@@ -70,7 +77,8 @@ SAMPLE_PRODUCTS = [
         "price": 55,
         "category": "Fruits & Vegetables",
         "tags": ["vegetables", "carrots", "fresh", "orange"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/10000024_32-fresho-carrot-orange.jpg"
+        "image_url": "https://suttindseeds.in/wp-content/uploads/2023/02/CARROT-F-1-INDIAN-RED-2.jpg"
+    
     },
 
     # Baby Food
@@ -80,15 +88,15 @@ SAMPLE_PRODUCTS = [
         "price": 275,
         "category": "Baby Food",
         "tags": ["baby", "cereal", "nutrition", "cerelac"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/1200005742_32-nestle-cerelac-baby-cereal-wheat-honey.jpg"
-    },
+"image_url": "https://images.squarespace-cdn.com/content/v1/577d692d2e69cff0a51027a9/1472987610185-D0XJN161KLDZQR6N1WG1/Cerelac.JPG"
+        },
     {
         "id": "BF002",
         "name": "Baby Diapers Size M",
         "price": 890,
         "category": "Baby Food",
         "tags": ["baby", "diapers", "hygiene", "medium"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/280316_32-pampers-diaper-pants-medium.jpg"
+        "image_url": "https://gpsretail.in/wp-content/uploads/2024/11/teddy.jpg"
     },
     {
         "id": "BF003",
@@ -96,7 +104,7 @@ SAMPLE_PRODUCTS = [
         "price": 145,
         "category": "Baby Food",
         "tags": ["baby", "wipes", "gentle", "cleaning"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005473_32-johnson-baby-wipes.jpg"
+        "image_url": "https://www.healthklin.com/image/cache/catalog/PRODUCTIMAGES/mee-mee-wipes-72-pcs-225x350.jpg"
     },
 
     # Breakfast & Sauces
@@ -106,7 +114,7 @@ SAMPLE_PRODUCTS = [
         "price": 285,
         "category": "Breakfast & Sauces",
         "tags": ["cereal", "breakfast", "kelloggs", "cornflakes"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40121897_32-kelloggs-corn-flakes.jpg"
+        "image_url": "https://nagabazaar.com/cdn/shop/files/Kelloggs-Corn-Flakes-with-Real-Strawberry-Puree-300g.jpg"
     },
     {
         "id": "BS002",
@@ -114,7 +122,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Breakfast & Sauces",
         "tags": ["sauce", "ketchup", "maggi", "tomato"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/266101_32-maggi-rich-tomato-ketchup.jpg"
+        "image_url": "https://www.onionz.in/uploads/items/655de0b0c2d11c1df7f500c74b2a706e.jpg"
     },
     {
         "id": "BS003",
@@ -122,7 +130,7 @@ SAMPLE_PRODUCTS = [
         "price": 165,
         "category": "Breakfast & Sauces",
         "tags": ["jam", "fruit", "spread", "kissan"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40122884_32-kissan-mixed-fruit-jam.jpg"
+        "image_url": "https://m.media-amazon.com/images/I/81QlwJRj53L.jpg"
     },
 
     # Cleaning Essentials
@@ -132,7 +140,7 @@ SAMPLE_PRODUCTS = [
         "price": 345,
         "category": "Cleaning Essentials",
         "tags": ["detergent", "washing", "clothes", "surf"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40154714_32-surf-excel-detergent-powder.jpg"
+        "image_url": "https://cdn.grofers.com/da/cms-assets/cms/product/42ea51e6-8154-4bb0-9d29-18cc53896ecb.jpg"
     },
     {
         "id": "CE002",
@@ -140,7 +148,7 @@ SAMPLE_PRODUCTS = [
         "price": 185,
         "category": "Cleaning Essentials",
         "tags": ["cleaner", "floor", "disinfectant", "lizol"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005474_32-lizol-floor-cleaner-citrus.jpg"
+        "image_url": "https://gharstuff.com/wp-content/uploads/2020/08/Lizol-Floral-Floor-Cleaner-500ml.jpg"
     },
     {
         "id": "CE003",
@@ -148,7 +156,7 @@ SAMPLE_PRODUCTS = [
         "price": 95,
         "category": "Cleaning Essentials",
         "tags": ["dishwash", "liquid", "cleaning", "vim"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005475_32-vim-dishwash-liquid-lemon.jpg"
+        "image_url": "https://www.bbassets.com/media/uploads/p/l/900459772_4-vim-dishwash-liquid-gel.jpg"
     },
 
     # Atta, Rice, Oil & Dals
@@ -158,7 +166,7 @@ SAMPLE_PRODUCTS = [
         "price": 485,
         "category": "Atta, Rice, Oil & Dals",
         "tags": ["atta", "wheat", "flour", "aashirvaad"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40001435_32-aashirvaad-atta-whole-wheat.jpg"
+        "image_url": "https://www.bbassets.com/media/uploads/p/l/126903_12-aashirvaad-atta-whole-wheat.jpg"
     },
     {
         "id": "AR002",
@@ -166,7 +174,7 @@ SAMPLE_PRODUCTS = [
         "price": 725,
         "category": "Atta, Rice, Oil & Dals",
         "tags": ["rice", "basmati", "grain", "cooking"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005447_32-india-gate-basmati-rice-super.jpg"
+        "image_url": "https://bf1af2.akinoncloudcdn.com/products/2024/09/09/71598/8ad31a32-4715-4142-8f62-2a6c0d714f50.jpg"
     },
     {
         "id": "AR003",
@@ -174,7 +182,7 @@ SAMPLE_PRODUCTS = [
         "price": 650,
         "category": "Atta, Rice, Oil & Dals",
         "tags": ["oil", "cooking", "sunflower", "fortune"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005454_32-fortune-sunflower-refined-oil.jpg"
+        "image_url": "https://m.media-amazon.com/images/I/81FbVYZJYyL.jpg"
     },
     {
         "id": "AR004",
@@ -182,7 +190,7 @@ SAMPLE_PRODUCTS = [
         "price": 185,
         "category": "Atta, Rice, Oil & Dals",
         "tags": ["dal", "lentils", "protein", "toor"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005476_32-toor-dal-oily.jpg"
+        "image_url": "https://dhatuorganics.com/wp-content/uploads/2025/01/Organic-Toor-Dal-front.jpg"
     },
 
     # Dairy, Bread & Eggs
@@ -192,7 +200,7 @@ SAMPLE_PRODUCTS = [
         "price": 65,
         "category": "Dairy, Bread & Eggs",
         "tags": ["milk", "dairy", "fresh", "amul"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005470_32-amul-fresh-milk.jpg"
+        "image_url": "https://gharstuff.com/wp-content/uploads/2019/03/Amul-Gold-Milk-500ml.jpg"
     },
     {
         "id": "DB002",
@@ -200,7 +208,7 @@ SAMPLE_PRODUCTS = [
         "price": 35,
         "category": "Dairy, Bread & Eggs",
         "tags": ["bread", "loaf", "britannia", "wheat"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005471_32-britannia-bread-white.jpg"
+        "image_url": "https://cdn.grofers.com/da/cms-assets/cms/product/8622bfed-5e2d-415d-8a85-99c5fb7bac04.jpg"
     },
     {
         "id": "DB003",
@@ -208,7 +216,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Dairy, Bread & Eggs",
         "tags": ["eggs", "protein", "fresh", "dozen"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005472_32-farm-fresh-eggs-brown.jpg"
+        "image_url":  "https://shop.purityprayag.com/cdn/shop/products/HitaFarmsOrganic-6-Eggs-F.jpg"
     },
 
     # Tea, Coffee & More
@@ -218,7 +226,7 @@ SAMPLE_PRODUCTS = [
         "price": 425,
         "category": "Tea, Coffee & More",
         "tags": ["tea", "tata", "premium", "beverage"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005463_32-tata-tea-gold.jpg"
+        "image_url": "https://mcprod.spencers.in/media/catalog/product/1/0/1008950_4.jpg"
     },
     {
         "id": "TC002",
@@ -226,8 +234,9 @@ SAMPLE_PRODUCTS = [
         "price": 285,
         "category": "Tea, Coffee & More",
         "tags": ["coffee", "instant", "nescafe", "beverage"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005464_32-nescafe-instant-coffee.jpg"
+        "image_url":  "https://essentials.my/wp-content/uploads/2021/08/nescafe-gold-soluble-coffee-100g-min-1.jpg"
     },
+
 
     # Masala & Dry Fruits
     {
@@ -236,7 +245,7 @@ SAMPLE_PRODUCTS = [
         "price": 85,
         "category": "Masala & Dry Fruits",
         "tags": ["spices", "masala", "cooking", "mdh"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005477_32-mdh-garam-masala.jpg"
+        "image_url": "https://kohinoorfoods.ca/cdn/shop/products/MDH_garam_masala.jpg"
     },
     {
         "id": "MD002",
@@ -244,7 +253,7 @@ SAMPLE_PRODUCTS = [
         "price": 485,
         "category": "Masala & Dry Fruits",
         "tags": ["nuts", "almonds", "dry fruits", "healthy"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005478_32-almonds-premium.jpg"
+        "image_url": "https://www.suvidhasupermart.com/uploads/suvidha-supermart/products/nutraj-california-almonds-250g-441455_l.jpg"
     },
     {
         "id": "MD003",
@@ -252,7 +261,7 @@ SAMPLE_PRODUCTS = [
         "price": 565,
         "category": "Masala & Dry Fruits",
         "tags": ["nuts", "cashews", "dry fruits", "premium"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005479_32-cashews-premium.jpg"
+        "image_url": "https://cdn.grofers.com/app/images/products/sliding_image/527969a.jpg"
     },
 
     # Cold Drinks & Juices
@@ -262,7 +271,7 @@ SAMPLE_PRODUCTS = [
         "price": 65,
         "category": "Cold Drinks & Juices",
         "tags": ["cola", "soft drink", "beverage", "coca"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005480_32-coca-cola-soft-drink.jpg"
+        "image_url": "https://5.imimg.com/data5/QA/WB/WF/SELLER-14933844/coca-cola-cold-drink-500x500.jpg"
     },
     {
         "id": "CD002",
@@ -270,7 +279,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Cold Drinks & Juices",
         "tags": ["juice", "orange", "real", "fresh"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005481_32-real-orange-juice.jpg"
+        "image_url": "https://m.media-amazon.com/images/I/61lYCT3C-7L.jpg"
     },
 
     # Biscuits
@@ -280,7 +289,7 @@ SAMPLE_PRODUCTS = [
         "price": 25,
         "category": "Biscuits",
         "tags": ["biscuits", "parle", "glucose", "snack"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005465_32-parle-g-original-gluco-biscuits.jpg"
+        "image_url": "https://img.clevup.in/277874/SKU-3231_0-1742396696089.jpg"
     },
     {
         "id": "BI002",
@@ -288,7 +297,7 @@ SAMPLE_PRODUCTS = [
         "price": 55,
         "category": "Biscuits",
         "tags": ["cookies", "oreo", "chocolate", "cream"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005466_32-oreo-original-cookies.jpg"
+        "image_url": "https://m.media-amazon.com/images/I/51WQR3qg9vL.jpg"
     },
 
     # Sweet Cravings
@@ -298,7 +307,7 @@ SAMPLE_PRODUCTS = [
         "price": 85,
         "category": "Sweet Cravings",
         "tags": ["chocolate", "cadbury", "sweet", "dairy milk"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005469_32-cadbury-dairy-milk-chocolate.jpg"
+        "image_url": "https://springs.com.pk/cdn/shop/files/CDM-90G.jpg"
     },
     {
         "id": "SC002",
@@ -306,7 +315,7 @@ SAMPLE_PRODUCTS = [
         "price": 165,
         "category": "Sweet Cravings",
         "tags": ["sweets", "gulab jamun", "haldirams", "dessert"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005482_32-haldirams-gulab-jamun.jpg"
+        "image_url": "https://assets.giftalove.com/resources/common/giftimages/largeimage/haldiram-gulab-jamun.jpg"
     },
 
     # Munchies
@@ -316,7 +325,7 @@ SAMPLE_PRODUCTS = [
         "price": 25,
         "category": "Munchies",
         "tags": ["chips", "snacks", "lays", "potato"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005467_32-lays-classic-salted-potato-chips.jpg"
+        "image_url": "https://www.quickpantry.in/cdn/shop/products/lay-s-chile-limon-potato-chips-32-g-quick-pantry.jpg"
     },
     {
         "id": "MU002",
@@ -324,8 +333,9 @@ SAMPLE_PRODUCTS = [
         "price": 20,
         "category": "Munchies",
         "tags": ["snacks", "kurkure", "spicy", "munch"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005468_32-kurkure-masala-munch.jpg"
+        "image_url": "https://aamaderbazar.com/wp-content/uploads/2024/03/kurkure-masala-munch-chips-40-gm.jpg"
     },
+
 
     # Makeup & Beauty
     {
@@ -334,7 +344,7 @@ SAMPLE_PRODUCTS = [
         "price": 565,
         "category": "Makeup & Beauty",
         "tags": ["makeup", "foundation", "lakme", "beauty"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005483_32-lakme-foundation-natural.jpg"
+        "image_url": "https://www.lakmeindia.com/cdn/shop/files/24135_S1-8901030995255_800x.jpg"
     },
     {
         "id": "MB002",
@@ -342,7 +352,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Makeup & Beauty",
         "tags": ["skincare", "face wash", "himalaya", "natural"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005484_32-himalaya-face-wash-neem.jpg"
+        "image_url": "https://5.imimg.com/data5/SELLER/Default/2020/12/MS/LV/GZ/120430256/himalaya-face-wash-500x500.jpg"
     },
 
     # Hygiene & Grooming
@@ -352,7 +362,7 @@ SAMPLE_PRODUCTS = [
         "price": 85,
         "category": "Hygiene & Grooming",
         "tags": ["toothpaste", "dental", "colgate", "oral care"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005485_32-colgate-toothpaste-maxfresh.jpg"
+        "image_url":  "https://www.sabziadda.com/wp-content/uploads/2021/02/Colgate-Maxfresh-Spicy-Fresh-Toothpaste.jpg"
     },
     {
         "id": "HG002",
@@ -360,8 +370,9 @@ SAMPLE_PRODUCTS = [
         "price": 265,
         "category": "Hygiene & Grooming",
         "tags": ["shampoo", "hair care", "head shoulders", "dandruff"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005486_32-head-shoulders-shampoo-classic.jpg"
+        "image_url":  "https://5.imimg.com/data5/SELLER/Default/2022/1/TD/AS/SE/6235227/head-and-shoulders-hair-shampoo.jpg"
     },
+
 
     # Frozen Food & Ice Creams
     {
@@ -370,7 +381,7 @@ SAMPLE_PRODUCTS = [
         "price": 185,
         "category": "Frozen Food & Ice Creams",
         "tags": ["ice cream", "frozen", "amul", "dessert"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005487_32-amul-ice-cream-vanilla.jpg"
+        "image_url": "https://5.imimg.com/data5/OW/WE/MY-30494656/amul-realmilk-ice-cream.jpg"
     },
     {
         "id": "FF002",
@@ -378,7 +389,7 @@ SAMPLE_PRODUCTS = [
         "price": 225,
         "category": "Frozen Food & Ice Creams",
         "tags": ["frozen", "fries", "mccain", "potato"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005488_32-mccain-french-fries-straight-cut.jpg"
+        "image_url": "https://nlmaconline.com/cdn/shop/products/MCCAINCajunFront.jpg"
     },
 
     # Meats, Fish & Eggs
@@ -388,7 +399,7 @@ SAMPLE_PRODUCTS = [
         "price": 285,
         "category": "Meats, Fish & Eggs",
         "tags": ["chicken", "fresh", "meat", "protein"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005489_32-fresh-chicken-skinless.jpg"
+        "image_url": "https://dailygroceryshop.com/wp-content/uploads/2020/05/Chicken-curry-dailygroceryshop.jpg"
     },
     {
         "id": "MF002",
@@ -396,7 +407,7 @@ SAMPLE_PRODUCTS = [
         "price": 385,
         "category": "Meats, Fish & Eggs",
         "tags": ["fish", "seafood", "fillets", "protein"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005490_32-fish-fillets-fresh.jpg"
+        "image_url": "https://fooppers.in/wp-content/uploads/2021/05/Basa-Fish-Fillets-Online-450x450.jpg"
     },
 
     # Bath & Body
@@ -406,15 +417,16 @@ SAMPLE_PRODUCTS = [
         "price": 65,
         "category": "Bath & Body",
         "tags": ["soap", "bath", "dove", "moisturizing"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005491_32-dove-beauty-bar-original.jpg"
+        "image_url": "https://petracarestore.com/wp-content/uploads/2023/11/petracare-image-264.jpg"
     },
+    
     {
         "id": "BB002",
         "name": "Nivea Body Lotion",
         "price": 185,
         "category": "Bath & Body",
         "tags": ["lotion", "body care", "nivea", "moisturizer"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005492_32-nivea-body-lotion-soft.jpg"
+        "image_url":  "https://5.imimg.com/data5/EH/DU/SN/SELLER-100106295/body-lotion-500x500.jpg"
     },
 
     # Health & Baby Care
@@ -424,7 +436,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Health & Baby Care",
         "tags": ["health", "vicks", "cold relief", "balm"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005493_32-vicks-vaporub-balm.jpg"
+        "image_url": "https://online-pharmacy4u.co.uk/cdn/shop/products/vicks_vaporub_1_1.jpg"
     },
     {
         "id": "HB002",
@@ -432,7 +444,7 @@ SAMPLE_PRODUCTS = [
         "price": 145,
         "category": "Health & Baby Care",
         "tags": ["antiseptic", "dettol", "disinfectant", "health"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005494_32-dettol-antiseptic-liquid.jpg"
+        "image_url": "https://rapidtestkit.com.my/wp-content/uploads/2022/02/dettol-antiseptic-germicide-liquid-500ml.jpeg"
     },
 
     # Home Needs
@@ -442,7 +454,7 @@ SAMPLE_PRODUCTS = [
         "price": 285,
         "category": "Home Needs",
         "tags": ["bulb", "led", "philips", "lighting"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005495_32-philips-led-bulb-9w.jpg"
+        "image_url": "https://5.imimg.com/data5/SELLER/Default/2024/3/404191839/TA/QY/MH/107262425/philips-steller-light-500x500.jpg"
     },
     {
         "id": "HN002",
@@ -450,7 +462,7 @@ SAMPLE_PRODUCTS = [
         "price": 125,
         "category": "Home Needs",
         "tags": ["air freshener", "godrej", "fragrance", "home"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005496_32-godrej-air-freshener-rose.jpg"
+        "image_url": "https://www.urbangroc.com/wp-content/uploads/2022/05/godrej-aer-cool-freshner.jpg"
     },
 
     # Electricals & Accessories
@@ -460,7 +472,7 @@ SAMPLE_PRODUCTS = [
         "price": 785,
         "category": "Electricals & Accessories",
         "tags": ["charger", "samsung", "phone", "electronics"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005497_32-samsung-phone-charger-usb-c.jpg"
+        "image_url": "https://image-us.samsung.com/SamsungUS/home/mobile/mobile-accessories/pdp/ep-ta20jweusta/features/Flexibility_121316.jpg"
     },
     {
         "id": "EA002",
@@ -468,7 +480,7 @@ SAMPLE_PRODUCTS = [
         "price": 1285,
         "category": "Electricals & Accessories",
         "tags": ["earphones", "boat", "audio", "wireless"],
-        "image_url": "https://www.bbassets.com/media/uploads/p/l/40005498_32-boat-earphones-bassheads.jpg"
+        "image_url": "https://m.media-amazon.com/images/I/51JM8TpHVSL.jpg"
     }
 ]
 
