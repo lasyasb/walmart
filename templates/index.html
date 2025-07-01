@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Walmart - Smart Shopping Assistant</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- Custom CSS -->
+<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-walmart-blue">
+<div class="container">
+<a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+<img alt="Walmart" class="rounded-circle" height="40" src="https://th.bing.com/th/id/OIP.xl0-4Qe_XqPibpnQ2CcnoAHaHa?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;cb=idpwebpc2" width="40"/>
+        Walmart
+      </a>
+<button class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNav">
+<ul class="navbar-nav ms-auto">
+<li class="nav-item">
+<span class="navbar-text me-3" id="userEmail"></span>
+</li>
+<li class="nav-item">
+<button class="btn btn-walmart-yellow" id="authButton">
+<i class="fas fa-sign-in-alt me-1"></i> Sign In
+            </button>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<!-- Auth Modal -->
+<div class="modal fade" id="authModal" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">Welcome to Walmart</h5>
+<button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body">
+<ul class="nav nav-tabs mb-3" id="authTabs">
+<li class="nav-item">
+<button class="nav-link active" data-bs-target="#signin" data-bs-toggle="tab" id="signin-tab">Sign In</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" data-bs-target="#signup" data-bs-toggle="tab" id="signup-tab">Sign Up</button>
+</li>
+</ul>
+<div class="tab-content">
+<!-- Sign In -->
+<div class="tab-pane fade show active" id="signin">
+<form id="signinForm">
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input class="form-control" id="signinEmail" required="" type="email"/>
+</div>
+<div class="mb-3">
+<label class="form-label">Password</label>
+<input class="form-control" id="signinPassword" required="" type="password"/>
+</div>
+<button class="btn btn-walmart-blue w-100" type="submit">Sign In</button>
+</form>
+</div>
+<!-- Sign Up -->
+<div class="tab-pane fade" id="signup">
+<form id="signupForm">
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input class="form-control" id="signupEmail" required="" type="email"/>
+</div>
+<div class="mb-3">
+<label class="form-label">Password</label>
+<input class="form-control" id="signupPassword" required="" type="password"/>
+</div>
+<div class="mb-3">
+<label class="form-label">Confirm Password</label>
+<input class="form-control" id="confirmPassword" required="" type="password"/>
+</div>
+<button class="btn btn-walmart-blue w-100" type="submit">Sign Up</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content (same as your previous version) -->
+<div class="container my-4">
+<!-- Welcome Section -->
+<div class="text-center py-5" id="welcomeSection">
+<h1 class="display-4 text-walmart-blue mb-3">Welcome to CoBudget</h1>
+<p class="lead">Your smart shopping assistant for budget-friendly shopping</p>
+<button class="btn btn-walmart-yellow btn-lg" data-bs-target="#authModal" data-bs-toggle="modal">
+<i class="fas fa-rocket me-2"></i>
+              Get Started
+          </button>
+</div>
+<!-- App Content (Hidden until authenticated) -->
+<div id="appContent" style="display: none;">
+<!-- Budget Overview -->
+<div class="row mb-4">
+<div class="col-md-6">
+<div class="card border-walmart-blue">
+<div class="card-header bg-walmart-blue text-white">
+<i class="fas fa-piggy-bank me-2"></i>
+                          Monthly Budget
+                      </div>
+<div class="card-body">
+<div class="mb-3">
+<label class="form-label">Set Your Budget</label>
+<div class="input-group">
+<span class="input-group-text">₹</span>
+<input class="form-control" id="budgetInput" placeholder="0" step="1" type="number"/>
+<button class="btn btn-walmart-yellow" id="setBudgetBtn">Set</button>
+</div>
+</div>
+<div class="text-center" id="budgetDisplay">
+<h4 class="text-walmart-blue">Current Budget: ₹<span id="currentBudget">0</span></h4>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="card border-walmart-yellow">
+<div class="card-header bg-walmart-yellow text-dark">
+<i class="fas fa-chart-line me-2"></i>
+                          Budget Status
+                      </div>
+<div class="card-body">
+<div class="text-center">
+<h4>Cart Total: ₹<span id="cartTotal">0</span></h4>
+<div class="progress mb-2">
+<div class="progress-bar" id="budgetProgress" style="width: 0%"></div>
+</div>
+<div class="alert alert-warning d-none" id="budgetAlert">
+<i class="fas fa-exclamation-triangle me-2"></i>
+                                  Budget exceeded!
+                              </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<ul class="nav nav-tabs mb-4" id="mainTabs">
+<li class="nav-item">
+<button class="nav-link active" data-bs-target="#allProducts" data-bs-toggle="tab">
+<i class="fas fa-store me-1"></i>
+                      All Products
+                  </button>
+</li>
+<li class="nav-item">
+<button class="nav-link" data-bs-target="#personalCart" data-bs-toggle="tab">
+<i class="fas fa-shopping-cart me-1"></i>
+                      My Cart
+                  </button>
+</li>
+<li class="nav-item">
+<button class="nav-link" data-bs-target="#recommendations" data-bs-toggle="tab">
+<i class="fas fa-lightbulb me-1"></i>
+                      Smart Saver
+                  </button>
+</li>
+<li class="nav-item">
+<button class="nav-link" data-bs-target="#sharedCart" data-bs-toggle="tab">
+<i class="fas fa-users me-1"></i>
+                      Family Cart
+                  </button>
+</li>
+</ul>
+<!-- Tab Content -->
+<div class="tab-content">
+<!-- All Products Tab -->
+<div class="tab-pane fade show active" id="allProducts">
+<div class="card">
+<div class="card-header">
+<div class="d-flex justify-content-between align-items-center">
+<h5 class="mb-0">
+<i class="fas fa-store me-2"></i>
+                                  Browse All Products
+                              </h5>
+<div class="d-flex gap-2">
+<select class="form-select form-select-sm" id="categoryFilter" style="width: auto;">
+<option value="all">All Categories</option>
+</select>
+<div class="input-group" style="width: 250px;">
+<input class="form-control form-control-sm" id="productSearch" placeholder="Search products..." type="text"/>
+<button class="btn btn-outline-secondary btn-sm" id="clearSearchBtn">
+<i class="fas fa-times"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="card-body">
+<div id="allProductsGrid">
+<div class="text-center text-muted py-4">
+<i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+<p>Loading products...</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Personal Cart Tab -->
+<div class="tab-pane fade" id="personalCart">
+<div class="card">
+<div class="card-header">
+<h5 class="mb-0">
+<i class="fas fa-shopping-cart me-2"></i>
+                              My Personal Cart
+                          </h5>
+</div>
+<div class="card-body">
+<div id="personalCartItems">
+<div class="text-center text-muted py-4">
+<i class="fas fa-shopping-cart fa-3x mb-3"></i>
+<p>Your cart is empty. Add some items to get started!</p>
+</div>
+</div>
+<div class="mt-3">
+<h5>Total: ₹<span id="personalCartTotal">0</span></h5>
+</div>
+</div>
+</div>
+</div>
+<!-- Recommendations Tab -->
+<div class="tab-pane fade" id="recommendations">
+<!-- NutriBasket Section -->
+<div class="mt-4">
+<h5><i class="fas fa-apple-alt me-2"></i>NutriBasket</h5>
+<p class="text-muted">Choose dietary preferences to filter your grocery list:</p>
+<div class="form-check">
+<input class="form-check-input" id="lowSugar" type="checkbox" value="low sugar"/>
+<label class="form-check-label" for="lowSugar">Low Sugar</label>
+</div>
+<div class="form-check">
+<input class="form-check-input" id="lowSodium" type="checkbox" value="low sodium"/>
+<label class="form-check-label" for="lowSodium">Low Sodium</label>
+</div>
+<div class="form-check">
+<input class="form-check-input" id="highProtein" type="checkbox" value="high protein"/>
+<label class="form-check-label" for="highProtein">High Protein</label>
+</div>
+<div class="form-check">
+<input class="form-check-input" id="keto" type="checkbox" value="keto"/>
+<label class="form-check-label" for="keto">Keto Friendly</label>
+</div>
+<button class="btn btn-outline-success mt-2" id="filterNutritionBtn">
+<i class="fas fa-filter me-1"></i>Filter by Nutrition
+      </button>
+</div>
+<div class="card">
+<div class="card-header">
+<h5 class="mb-0">
+<i class="fas fa-lightbulb me-2"></i>
+          Smart Recommendations
+        </h5>
+</div>
+<div class="card-body">
+<div class="mb-4">
+<label class="form-label">What are you shopping for?</label>
+<div class="input-group">
+<input class="form-control" id="recommendationPrompt" placeholder="e.g., wedding, hygiene, cleaning supplies" type="text"/>
+<button class="btn btn-walmart-blue" id="getRecommendationsBtn">
+<i class="fas fa-search me-1"></i>
+              Get Recommendations
+            </button>
+</div>
+</div>
+<div class="alert alert-info d-none mt-3" id="recipeResult"></div>
+<div id="recommendationsResults">
+<div class="text-center text-muted py-4">
+<i class="fas fa-lightbulb fa-3x mb-3"></i>
+<p>Enter a search term to get smart recommendations within your budget!</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Shared Cart Tab -->
+<div class="tab-pane fade" id="sharedCart">
+<!-- Cart Creation/Joining Section -->
+<div class="card mb-4" id="sharedCartSetup">
+<div class="card-header">
+<h5 class="mb-0">
+<i class="fas fa-users me-2"></i>
+                              Shared Cart Session
+                          </h5>
+</div>
+<div class="card-body">
+<div class="row">
+<div class="col-md-6">
+<h6>Create New Shared Cart</h6>
+<div class="input-group mb-3">
+<input class="form-control" id="newCartName" placeholder="Cart name (e.g., Weekend Shopping)" type="text"/>
+<button class="btn btn-walmart-blue" id="createSharedCartBtn">
+<i class="fas fa-plus me-1"></i>Create
+                                      </button>
+</div>
+</div>
+<div class="col-md-6">
+<h6>Join Existing Cart</h6>
+<div class="input-group mb-3">
+<input class="form-control" id="joinCartId" placeholder="Enter cart ID (e.g., ABC12345)" type="text"/>
+<button class="btn btn-walmart-yellow" id="joinSharedCartBtn">
+<i class="fas fa-sign-in-alt me-1"></i>Join
+                                      </button>
+</div>
+</div>
+</div>
+<!-- Current Session Info -->
+<div class="alert alert-info d-none" id="currentSessionInfo">
+<div class="d-flex justify-content-between align-items-center">
+<div>
+<strong>Current Session:</strong> <span id="currentSessionName"></span><br/>
+<small>Cart ID: <code id="currentSessionId"></code> (share this with others)</small>
+</div>
+<button class="btn btn-sm btn-outline-secondary" id="leaveSharedCartBtn">
+<i class="fas fa-sign-out-alt me-1"></i>Leave Cart
+                                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Shared Cart Items -->
+<div class="card">
+<div class="card-header d-flex justify-content-between align-items-center">
+<h5 class="mb-0">
+<i class="fas fa-shopping-bag me-2"></i>
+                              Cart Items &amp; Bill Split
+                          </h5>
+<button class="btn btn-sm btn-outline-danger d-none" id="clearSharedCartBtn">Clear All</button>
+</div>
+<div class="card-body">
+<div id="sharedCartItems">
+<div class="text-center text-muted py-4">
+<i class="fas fa-users fa-3x mb-3"></i>
+<p>Create or join a shared cart to start shopping together!</p>
+</div>
+</div>
+<!-- Bill Split Summary -->
+<div class="mt-4 d-none" id="billSplitSummary">
+<hr/>
+<h6><i class="fas fa-calculator me-2"></i>Bill Split Summary</h6>
+<div class="row" id="userTotals"></div>
+<div class="text-center mt-3">
+<h5 class="text-walmart-blue">Grand Total: ₹<span id="sharedCartTotal">0</span></h5>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+<div class="spinner-border text-walmart-blue" role="status">
+<span class="visually-hidden">Loading...</span>
+</div>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Firebase Config -->
+<script>
+window.FIREBASE_API_KEY = "AIzaSyD9HtUFhk_AwApjyaL-2ROSCpmrVfyNJdQ";
+    window.FIREBASE_PROJECT_ID = "cobudget-20a5d";
+    window.FIREBASE_APP_ID = "cobudget";
+  </script>
+<!-- Firebase + App Logic -->
+<script src="{{ url_for('static', filename='firebase.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='app.js') }}" type="module"></script>
+<!-- Floating Recipe Bot Button -->
+<div id="recipeBotContainer">
+<button class="bot-button btn btn-primary rounded-circle shadow" id="recipeBotToggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;">🍳 Recipes</button>
+<div class="bot-box d-none d-none shadow" id="recipeBotBox" style="position: fixed; top: 100px; right: 0; width: 350px; height: 400px; background: white; border-left: 2px solid #ccc; padding: 15px; z-index: 9999; overflow-y: auto;">
+<div class="bot-header">Ask for a recipe</div>
+<textarea id="botPrompt" placeholder="e.g., quick dinner with spinach..." rows="2"></textarea>
+<button class="btn btn-sm btn-success mt-1" id="botSendBtn">Get Recipe</button>
+<div class="bot-response mt-2" id="botRecipeOutput"></div>
+</div>
+</div>
+</body>
+</html>
