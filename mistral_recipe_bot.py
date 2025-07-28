@@ -1,7 +1,8 @@
 
 import requests
 
-def get_mistral_recipes(prompt, mistral_api_key="1I0BiIiBuxpv8xXlposfEkrzx93rsZWO"):
+def get_mistral_recipes(prompt, mistral_api_key="#api key
+"):
     url = "https://api.mistral.ai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {mistral_api_key}",
