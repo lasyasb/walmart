@@ -21,14 +21,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 // Firebase configuration - using environment variables
-const firebaseConfig = {
-  apiKey: "AIzaSyD9HtUFhk_AwApjyaL-2ROSCpmrVfyNJdQ",
-  authDomain: "cobudget-20a5d.firebaseapp.com",
-  projectId: "cobudget-20a5d",
-  storageBucket: "cobudget-20a5d.appspot.com",
-  messagingSenderId: "21674588778",
-  appId: "1:21674588778:web:YOUR_ACTUAL_APP_ID"  // Replace with your real App ID
-};
+//your own
 
 
 // Initialize Firebase
